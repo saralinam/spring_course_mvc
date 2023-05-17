@@ -2,12 +2,14 @@ package com.lina.spring.mvc;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 @Controller
 
@@ -37,19 +39,23 @@ public class MyController {
 
 
     @RequestMapping("/showDetails")
-    public String showEmpDetails(@ModelAttribute("employee") Employee emp){
+    //@Valid helps that our attribute will be validated, if validation will be successful
+    //we will see result on "show-emp-details-view.jsp", if not we have to go back & fix the issue on
+    //"ask-emp-details-view.jsp" page
+    //Than we will add "BindingResult", with the help of BindingResult we will see the
+    // result was successful or not
+    public String showEmpDetails(@Valid @ModelAttribute("employee") Employee emp,
+                                 BindingResult bindingResult){
 
-        String name = emp.getName();
-        emp.setName(name);
+        System.out.println("surname length = "+emp.getSurname().length());
 
-        String surname = emp.getSurname();
-        emp.setSurname(surname+"!");
+       if(bindingResult.hasErrors()){
+           return "ask-emp-details-view";
+       }
+        else{
+            return "show-emp-details-view";
+       }
 
-        int salary = emp.getSalary();
-        emp.setSalary(salary*5);
-
-
-        return "show-emp-details-view";
     }
 
 
